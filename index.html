@@ -67,6 +67,8 @@
   }
   .icon-btn:hover{background:rgba(255,255,255,0.14); transform:scale(1.06);}
   .icon-btn:active{transform:scale(0.94);}
+  .icon-btn:disabled{opacity:0.3; cursor:not-allowed; transform:none;}
+  .icon-btn:disabled:hover{background:rgba(255,255,255,0.06); transform:none;}
 
   .progress-wrap{
     flex:1;
@@ -203,10 +205,10 @@
     display:flex; flex-direction:column; gap:6px;
   }
   .story-card .thumb{
-    width:100%; aspect-ratio:4/3; border-radius:12px; overflow:hidden;
+    width:100%; aspect-ratio:3/4; border-radius:12px; overflow:hidden;
     background:#eef1f7; margin-bottom:6px;
   }
-  .story-card .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .story-card .thumb img{width:100%; height:100%; object-fit:contain; display:block; background:#eef1f7;}
   .story-card .thumb-placeholder{
     width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     color:#8a93a6; font-size:28px;
@@ -252,6 +254,13 @@
   .mic-btn.listening{background:linear-gradient(135deg,#D9534F,#b53e3a); animation:pulse 1.1s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,83,79,0.5);}70%{box-shadow:0 0 0 12px rgba(217,83,79,0);}100%{box-shadow:0 0 0 0 rgba(217,83,79,0);}}
   .mic-status{font-size:13px; color:var(--navy-500); font-weight:700;}
+  .skip-silent-btn{
+    display:block; border:none; background:none;
+    color:#7a8294; font-size:12.5px; font-weight:700;
+    text-decoration:underline; padding:6px 0 14px; cursor:pointer;
+  }
+  .skip-silent-btn:hover{color:var(--navy-700);}
+  .skip-silent-btn:disabled{opacity:0.4; cursor:not-allowed; text-decoration:none;}
   .reset-link{border:none; background:none; color:var(--navy-500); font-size:13px; font-weight:700; text-decoration:underline; padding:4px;}
 
   .accuracy-pill{display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-weight:800; font-size:13px;}
@@ -410,7 +419,8 @@
   <!-- ============ 5. READER ============ -->
   <section class="screen" id="screen-reader">
     <div class="topbar">
-      <button class="icon-btn" id="btnHome" title="Bumalik sa unang pahina">🏠</button>
+      <button class="icon-btn" id="btnHome" title="Bumalik sa library">🏠</button>
+      <button class="icon-btn" id="btnPrev" title="Nakaraang pahina">⬅</button>
       <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
       <div class="page-count" id="pageCount">1/1</div>
     </div>
@@ -557,8 +567,8 @@ const STORY_PAWPAGONG = [
 
 
 const LIBRARY = [
-  { key:'basura', title:'Basura', author:'Isinulat ni: Rinelie D. Ediesca', illustrator:'Iginuhit ni: Adrian M. Cebu', thumb:'images/basura-thumb.png', pages: STORY_BASURA, available:true },
-  { key:'pawpagong', title:'Si Paw Pagong at si Rabi Kuneho', author:'Isinulat ni: Genelyn M. Cano', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/pawpagong-thumb.png', pages: STORY_PAWPAGONG, available:true }
+  { key:'pawpagong', title:'Si Paw Pagong at si Rabi Kuneho', author:'Isinulat ni: Genelyn M. Cano', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/pawpagong-thumb.png', pages: STORY_PAWPAGONG, available:true },
+  { key:'basura', title:'Basura', author:'Isinulat ni: Rinelie D. Ediesca', illustrator:'Iginuhit ni: Adrian M. Cebu', thumb:'images/basura-thumb.png', pages: STORY_BASURA, available:true }
   // halimbawa ng paglalagay ng susunod na kwento:
   // { key:'susunod', title:'Pangalan ng Bagong Kwento', author:'Isinulat ni: ___', illustrator:'Iginuhit ni: ___', thumb:'images/susunod-thumb.png', pages: STORY_SUSUNOD, available:true }
 ];
@@ -606,7 +616,14 @@ document.getElementById('btnGoLogin').addEventListener('click', ()=>showScreen('
 document.getElementById('btnBackToHowto').addEventListener('click', ()=>showScreen('screen-howto'));
 document.getElementById('btnBackToLogin').addEventListener('click', ()=>showScreen('screen-login'));
 
-document.getElementById('btnHome').addEventListener('click', ()=>goHome(true));
+document.getElementById('btnHome').addEventListener('click', ()=>{
+  if(state.pageIndex>0){
+    if(!confirm('Sigurado ka bang babalik sa library? Mawawala ang progreso mo sa kwentong ito.')) return;
+  }
+  resetProgress();
+  showScreen('screen-library');
+});
+document.getElementById('btnPrev').addEventListener('click', prevPage);
 document.getElementById('btnHome2').addEventListener('click', ()=>goHome(false));
 document.getElementById('btnHome3').addEventListener('click', ()=>goHome(false));
 document.getElementById('btnBackToLibrary').addEventListener('click', ()=>{
@@ -883,6 +900,8 @@ function updateProgress(){
   const pct = total>1 ? Math.round((state.pageIndex/(total-1))*100) : 100;
   progressBar.style.width = pct+'%';
   pageCount.textContent = (state.pageIndex+1)+'/'+total;
+  const btnPrev = document.getElementById('btnPrev');
+  if(btnPrev) btnPrev.disabled = (state.pageIndex===0);
 }
 
 function imageColumnHTML(imgSrc, caption){
@@ -908,6 +927,13 @@ function renderPage(){
 function nextPage(){
   if(state.pageIndex < state.pages.length-1){
     state.pageIndex++;
+    renderPage();
+  }
+}
+
+function prevPage(){
+  if(state.pageIndex > 0){
+    state.pageIndex--;
     renderPage();
   }
 }
@@ -945,6 +971,7 @@ function renderTextPage(page){
             <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
             <span class="mic-status" id="micStatus"></span>
           </div>
+          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
           <div id="readoutArea"></div>
           ${discussBoxHTML(page.discuss)}
           <div class="continue-row"><button class="btn-continue" id="btnNext" disabled>Magpatuloy →</button></div>
@@ -953,6 +980,12 @@ function renderTextPage(page){
       </div>
     </div>`;
   setupMic(page.text, (done)=>{ document.getElementById('btnNext').disabled = !done; });
+  document.getElementById('skipMicBtn').addEventListener('click', ()=>{
+    document.getElementById('micBtn').disabled = true;
+    document.getElementById('skipMicBtn').disabled = true;
+    document.getElementById('micStatus').textContent = '✓ Tahimik na binasa.';
+    document.getElementById('btnNext').disabled = false;
+  });
   document.getElementById('btnNext').addEventListener('click', nextPage);
 }
 
@@ -966,6 +999,7 @@ function renderMathPage(page){
             <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
             <span class="mic-status" id="micStatus"></span>
           </div>
+          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
           <div id="readoutArea"></div>
           <div id="problemsArea" style="margin-top:18px;"></div>
           <div class="closing-line" id="closingLine" style="display:none;">${page.closing}</div>
@@ -987,6 +1021,13 @@ function renderMathPage(page){
   }
 
   setupMic(page.narration, (done)=>{ readingDone = done; maybeEnableNext(); });
+  document.getElementById('skipMicBtn').addEventListener('click', ()=>{
+    document.getElementById('micBtn').disabled = true;
+    document.getElementById('skipMicBtn').disabled = true;
+    document.getElementById('micStatus').textContent = '✓ Tahimik na binasa.';
+    readingDone = true;
+    maybeEnableNext();
+  });
 
   const problemsArea = document.getElementById('problemsArea');
   let solvedCount = 0;
@@ -1017,7 +1058,8 @@ function renderMathPage(page){
 function renderQuestionsPage(){
   const page = state.pages[state.pageIndex];
   const items = page.items || [];
-  let bodyHTML = `<h3 style="margin-top:0; color:var(--navy-700);">${page.title || 'Mga Tanong'}</h3>`;
+  let bodyHTML = `<h3 style="margin-top:0; color:var(--navy-700);">${page.title || 'Mga Tanong'}</h3>
+    <p style="font-size:13px; color:#6b7585; margin-top:-6px;">Pwede kang sumulat ng sagot (tahimik) o pindutin ang 🎤 para magsalita.</p>`;
 
   items.forEach((item, idx)=>{
     if(item.choices){
