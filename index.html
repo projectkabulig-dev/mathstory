@@ -493,33 +493,36 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycbcMqDkJe4zau
    STORY CONTENT — "Basura"
    ============================================================ */
 const STORY_BASURA = [
-  { id:1, type:'text', img:'images/page1.png',
+  { id:1, type:'text', img:'images/basura-page1.png',
     caption:'Naglilinis ang magpinsang Allysa at Leah sa kanilang likod-bahay.',
-    text:`Sabado ng umaga, naisipan ng magpinsang Allysa at Leah na magtungo sa kanilang likod-bahay. Doon nila nakita ang mga nakatambak na basura. Kumuha sila ng walis at pandakot. Sinimulan nila ang paglilinis. Gamit ang sako, inihiwalay nila ang mga basurang nabubulok, di-nabubulok, at nagagamit muli. "Ang dami namang plastik at bote, Allysa," ang sabi ni Leah sa pinsan. "Oo nga!" sagot naman ni Allysa. "Ano kaya kung ibenta natin ang mga ito?" "Oo nga ano? Ibenta natin upang mabawasan ang mga nakatambak dito sa likod-bahay," sang-ayon ni Leah sa pinsan.`
+    text:`Sabado ng umaga, naisipan ng magpinsang Allysa at Leah na magtungo sa kanilang likod-bahay. Doon nila nakita ang mga nakatambak na basura. Kumuha sila ng walis at pandakot. Sinimulan nila ang paglilinis. Gamit ang sako, inihiwalay nila ang mga basurang nabubulok, di-nabubulok, at nagagamit muli. "Ang dami namang plastik at bote, Allysa," ang sabi ni Leah sa pinsan. "Oo nga!" sagot naman ni Allysa. "Ano kaya kung ibenta natin ang mga ito?" "Oo nga ano? Ibenta natin upang mabawasan ang mga nakatambak dito sa likod-bahay," sang-ayon ni Leah sa pinsan.`,
+    discuss:[
+      'Kailan naglinis ng bakuran ang magpinsang Allysa at Leah?',
+      'Paano nila inihiwalay ang mga basura?',
+      'Ano ang gagawin ng magpinsan sa mga basura?'
+    ]
   },
-  { id:2, type:'math', img:'images/page2.png',
+  { id:2, type:'math', img:'images/basura-page2.png',
     caption:'Dinala nila ang mga basura sa tindahan ni Aling Ibeng upang ibenta.',
-    narration:`Dinala nila ang mga plastik at bote sa tindahan ni Aling Ibeng upang ibenta. Ang plastik ay umabot ng 10 kilo at bawat kilo ay nagkakahalaga ng 2 piso. Ang bote naman ay 20 piraso at ang halaga ng bawat isa ay 1 piso.`,
+    narration:`Dinala nila ang mga plastik at bote sa tindahan ni Aling Ibeng upang ibenta. Ang plastik ay umabot ng 10 kilo at bawat kilo ay nagkakahalaga ng 2 piso. Ang bote naman ay 20 piraso at ang halaga ng bawat isa ay 1 piso. "Wow! Mayroon tayong apatnapung piso, Leah!" tuwang-tuwa na sabi ni Allysa. "Oo nga," bawasan natin ng sampung piso. Bumili tayo ng tinapay sa tindahan," sagot naman ni Leah sa pinsan.`,
     problems:[
       {label:'Plastik: 10 kilo × ₱2 =', answer:20},
       {label:'Bote: 20 piraso × ₱1 =', answer:20},
-      {label:'Kabuuan: 20 + 20 =', answer:40}
-    ],
-    closing:'"Wow! Mayroon tayong ₱40.00, Leah!" tuwang-tuwa na sabi ni Allysa.'
-  },
-  { id:3, type:'math', img:'images/page3.png',
-    caption:'Tuwang-tuwa ang magpinsan sa kinitang pera mula sa basura.',
-    narration:`"Oo nga. Bawasan natin ng 10 piso. Bumili tayo ng tinapay sa tindahan," sagot naman ni Leah sa pinsan.`,
-    problems:[
+      {label:'Kabuuan: 20 + 20 =', answer:40},
       {label:'₱40 − ₱10 =', answer:30}
     ],
-    closing:'Hawak-kamay ang magpinsan na pumunta sa tindahan upang bumili ng tinapay. Nang makauwi sa kanilang bahay, hinati nila ang natirang pera mula sa pinagbentahan nila ng basura at inilagay sa kani-kaniyang alkansya.'
+    closing:'Hawak-kamay ang magpinsan na pumunta sa tindahan upang bumili ng tinapay. Nang makauwi sa kanilang bahay, hinati nila ang natirang pera mula sa pinagbentahan nila ng basura at inilagay sa kani-kaniyang alkansya.',
+    discuss:[
+      'Ilang kilo ng plastik at bote ang kanilang naipon?',
+      'Magkano ang kilo ng plastik? Ng bote?',
+      'Magkano lahat ang kinita nila mula sa pagbebenta ng bote at plastik?'
+    ]
   },
-  { id:4, type:'closing', img:'images/page4.png',
+  { id:3, type:'closing', img:'images/basura-page3.png',
     caption:'Bumalik sila sa malinis na likod-bahay, tuwang-tuwa sa magandang ginawa.',
     text:'Bumalik sila sa malinis na likod-bahay, tuwang-tuwa sa magandang ginawa nila.'
   },
-  { id:5, type:'questions',
+  { id:4, type:'questions',
     title:'Mga Tanong',
     items:[
       {q:'1. Sino ang magpinsan sa kuwento?', choices:[
@@ -595,8 +598,246 @@ const STORY_PAWPAGONG = [
 ];
 
 
+/* ============================================================
+   STORY CONTENT — "Ang Masipag na si Maria"
+   ============================================================ */
+const STORY_MARIA = [
+  { id:1, type:'text', img:'images/maria-page1.png',
+    caption:'Inutusan si Maria ng kanyang nanay na bumili sa tindahan.',
+    text:`Si Maria ay anim na taong gulang at kasalukuyang nasa unang baitang. Minsan inutusan siya ng kanyang nanay para bumili sa tindahan. Ang tindahan ay nasa tapat lamang ng kanilang bahay. "Anak, bumili ka ng suka, toyo, paminta, sibuyas, at bawang kina Aling Nena," utos ng kanyang nanay. "Magkano po suka, toyo, paminta, sibuyas, at bawang ang bibilhin ko inay?" ang tanong ni Maria. "Bumili ka ng limang pisong (₱5) sibuyas, tatlong pisong (₱3) paminta, at limang pisong (₱5) bawang," tugon ng nanay niya.`,
+    discuss:[
+      'Ilang taong gulang na si Maria?',
+      'Bakit siya inutusan ng kanyang nanay?',
+      'Ano-ano ang ipinabili sa kanya ng kanyang nanay?',
+      'Saan matatagpuan ang tindahan ni Aling Nena?',
+      'Magkanong sibuyas, paminta, at bawang ang bibilhin ni Maria?'
+    ]
+  },
+  { id:2, type:'text', img:'images/maria-page2.png',
+    caption:'Binigyan si Maria ng kanyang nanay ng limampung piso.',
+    text:`Binigyan siya ng kanyang nanay ng limampung piso (₱50). Pumunta siya sa tindahan at bumili ng mga bilin ng kanyang nanay. Umuwi na siya pagkatapos makapamili. "Anak, magkano ang sukli na ibinigay sa iyo ni Aling Nena?" tanong ng nanay ni Maria. "Dalawampu't tatlong piso (₱23) po inay," sagot ni Maria. "Magkano ba lahat ng ipinamili mo?" tanong uli ng nanay ni Maria.`,
+    discuss:[
+      'Magkano ang perang ibinigay ng nanay ni Maria sa kanya?',
+      'Magkano ang dalang sukli ni Maria pagkagaling sa tindahan?',
+      'Magkano kaya ang kabuuang halaga ng mga pinamili ni Maria?'
+    ]
+  },
+  { id:3, type:'math', img:'images/maria-page3.png',
+    caption:'Ipinaliwanag ni Maria ang pagbilang ng kanyang ginastos.',
+    narration:`"Ang toyo po ay pitong piso (₱7), ang suka ay pitong piso (₱7) rin. Tig-limang piso (₱5) ang sibuyas at bawang at tatlong piso (₱3) naman ang paminta. Kapag pinagsama-sama po ito ang kabuuan ay dalawampu't pitong piso (₱27). Ibabawas po ang ₱27 sa ₱50 para malaman kung magkano ang sukli."`,
+    problems:[
+      {label:'₱7 + ₱7 + ₱5 + ₱5 + ₱3 =', answer:27},
+      {label:'₱50 − ₱27 =', answer:23}
+    ],
+    closing:'"Ang galing naman. Paano mo ito nalaman anak?" pagkamanghang tanong ng nanay ni Maria. "Itinuro na po sa amin sa iskol ang pagdaragdag at pagbabawas inay," pagmamalaking tugon ni Maria.',
+    discuss:[
+      'Tama ba ang sukli sa kanya? Patunayan ito.',
+      'Bakit namangha ang nanay ni Maria sa kanya?',
+      'Ikaw, marunong ka na rin bang magbawas o minus?'
+    ]
+  },
+  { id:4, type:'closing', img:'images/maria-page4.png',
+    caption:'Natutunan ni Maria ang kahalagahan ng pagbibilang ng pera.',
+    text:'Natutunan ni Maria ang kahalagahan ng pagbibilang ng pera at pagsunod sa utos ng kanyang magulang.'
+  },
+  { id:5, type:'questions',
+    title:'Mga Tanong',
+    items:[
+      {q:'1. Nasa anong baitang na si Maria?', choices:[
+        {text:'Unang baitang', correct:true},
+        {text:'Ikalawang baitang', correct:false},
+        {text:'Ikatlong baitang', correct:false}
+      ]},
+      {q:'2. Ano-ano ang mga ipinabili sa kanya ng kanyang nanay?', choices:[
+        {text:'Suka, toyo, paminta, sibuyas, at bawang', correct:true},
+        {text:'Bigas at karne', correct:false},
+        {text:'Gulay at prutas', correct:false}
+      ]},
+      {q:'3. Kung ikaw si Maria at inutusan ka ng nanay mo na bumili sa tindahan habang kalaro mo pa ang iyong mga kaibigan, susunod ka ba? Bakit?', reflect:true},
+      {q:'4. Sasabihin mo ba sa nanay mo ang totoong sukli? Bakit?', reflect:true},
+      {q:'5. Sobra ang sukling ibinigay sa iyo ng tindera, ano ang gagawin mo? Bakit?', reflect:true}
+    ]
+  }
+];
+
+/* ============================================================
+   STORY CONTENT — "Sino ang Mas Nakahihigit"
+   ============================================================ */
+const STORY_NAKAHIHIGIT = [
+  { id:1, type:'text', img:'images/nakahihigit-page1.png',
+    caption:'Nagkayayaan si Toto at Nene na manguha ng bayabas.',
+    text:`Sina Toto at Nene ay magkapit-bahay at magkaklase pa. Nag-aaral sila sa Mababang Paaralan ng Calunacon. Kapwa sila nasa unang baitang. Sabado. Nagkayayaan ang dalawa na manguha ng bayabas. Ang puno ng bayabas ay nasa bakuran ni Aling Belen. "Ne, punta tayo kina Aling Belen hihingi tayo ng bayabas," ang sabi ni Toto. "Sige. Pero magpapaalam muna ako kay Nanay," tugon naman ni Nene. Nang makapagpaalam na ang dalawa, pinaalalahanan sila na magsuot ng face mask upang may proteksyon laban sa COVID 19.`,
+    discuss:[
+      'Saan nag-aaral sina Toto at Nene?',
+      'Bakit sila nagkayayaan?',
+      'Saan matatagpuan ang puno ng bayabas?',
+      'Bakit kailangan nilang magpaalam kay Aling Belen?',
+      'Bakit kailangan nilang magsuot ng face mask?'
+    ]
+  },
+  { id:2, type:'text', img:'images/nakahihigit-page2.png',
+    caption:'Pumayag si Aling Belen na pumitas ng bayabas ang magkaibigan.',
+    text:`"Tao po! Tao po! Magandang araw po sa inyo Aling Belen. Puwede po ba kaming makahingi ng bayabas?" ang tanong ni Toto at Nene. "Abay oo naman. Pakibuksan nalang ninyo ang gate at pumasok kayo rito sa loob," tugon ni Aling Belen. "Maraming salamat po!" pagpapasalamat ng dalawa. "Mag-iingat kayo sa pag-akyat ha," ang paalala ni Aling Belen. "To, paramihan tayo ng makukuhang bayabas," paghahamon ni Nene. "Sige," tugon ni Toto.`,
+    discuss:[
+      'Bakit nagpaalala si Aling Belen na mag-ingat ang dalawa sa pag-akyat sa puno ng bayabas?',
+      'Ano ang hamon ni Nene kay Toto?',
+      'Tama ba ang ginawa ng dalawa na magpaalam muna bago pumasok ng gate? Bakit?'
+    ]
+  },
+  { id:3, type:'math', img:'images/nakahihigit-page3.png',
+    caption:'Pinagbilang nila ang kanilang napitas na bayabas.',
+    narration:`Nag-umpisa na silang mamitas ng mga bayabas. Inilagay nila sa kani-kanilang bulsa ang mga bayabas. Nang mapuno na, dahan-dahan silang bumaba. Binilang nila ang mga bayabas na kanilang napitas. Walong (8) bayabas ang nakuha ni Nene at labindalawa (12) naman ang kay Toto.`,
+    problems:[
+      {label:'8 + 12 =', answer:20},
+      {label:'12 − 8 =', answer:4}
+    ],
+    closing:'Sa kabuuan ay dalawampung (20) pirasong bayabas ang nakuha nilang dalawa. Bago umalis ay nagpasalamat sila kay Aling Belen sa mga bayabas na kanilang nakuha.',
+    discuss:[
+      'Saan nila inilagay ang napitas nilang bayabas?',
+      'Mas marami ng ilang piraso ang napitas ni Toto kaysa kay Nene?'
+    ]
+  },
+  { id:4, type:'questions',
+    title:'Mga Tanong',
+    items:[
+      {q:'1. Sino-sino ang magkaibigan sa kuwento?', choices:[
+        {text:'Toto at Nene', correct:true},
+        {text:'Allysa at Leah', correct:false},
+        {text:'Maria at Aling Nena', correct:false}
+      ]},
+      {q:'2. Saan sila namitas ng bayabas?', choices:[
+        {text:'Sa bakuran ni Aling Belen', correct:true},
+        {text:'Sa palengke', correct:false},
+        {text:'Sa paaralan', correct:false}
+      ]},
+      {q:'3. Tama ba ang ginawa nilang nagpaalam muna sa kanilang mga magulang bago manguha ng bayabas? Bakit?', reflect:true},
+      {q:'4. Sa palagay mo, bakit kaya sila pinaalalahanan ni Aling Belen na mag-ingat sa pag-akyat?', reflect:true},
+      {q:'5. Kung kayo si Toto at Nene, magpapasalamat din ba kayo kapag binigyan ng kahit anumang bagay? Bakit?', reflect:true}
+    ]
+  }
+];
+
+/* ============================================================
+   STORY CONTENT — "Bakasyon Na"
+   ============================================================ */
+const STORY_BAKASYON = [
+  { id:1, type:'text', img:'images/bakasyon-page1.png',
+    caption:'Sabik na maghintay si Von sa kanilang bakasyon sa Baguio.',
+    text:`Nakaugalian na ng pamilya ni Ginoong Bert at Ginang Lyn kasama ang kanilang dalawang anak na sina Althea, sampung taong gulang at Von, walong taong gulang na magbakasyon sa Lungsod ng Baguio tuwing pagkatapos ng taunang klase. Si G. Bert ay tubong Baguio kung kaya't nais ng pamilya na palagiang dumalaw ang mga kamag-anak nila sa nasabing lungsod. Isinasabay rin nila ang pamamasyal bilang surpresang regalo kina Althea at Von para sa kanilang masigasig na pag-aaral. "Yehey! Limang tulog na lang, bakasyon na! Makikita ko na sina lolo at lola," masayang sambit ni Von at halatang sabik nang makita ang kanilang lolo at lola.`,
+    discuss:[
+      'Sino-sino ang mga tauhan sa kwento?',
+      'Saan sila magbabakasyon?',
+      'Bakit sila magbabakasyon doon?',
+      'Sa palagay mo, bakit sabik si Von na makita ang kanyang lolo at lola?'
+    ]
+  },
+  { id:2, type:'math', img:'images/bakasyon-page2.png',
+    caption:'Binilang ni Althea ang kanyang naipon sa alkansya.',
+    narration:`"Papa, pwede ko na po bang buksan ang aking alkansiya upang mabilang ko na kung magkano ang laman nito? Nais ko po kasing bilhan ng pasalubong si lolo Tery at lola Fely mula sa sarili kong ipon," mahabang paliwanag ni Althea. "Ako rin. Gusto ko rin po silang bilhan ng pasalubong," sabat ni Von. Kinabukasan, habang kumakain ng hapunan, sabik na tinanong ng ina ang magkapatid kung magkano ang laman ng kani-kanilang alkansiya. "Ako po ay nakapag-ipon ng limang tig-iisang daang piso, apat na tig-lilimampung piso, at anim na tig-dadalawampung piso," balita ni Althea sa ama at ina.`,
+    problems:[
+      {label:'(5 × ₱100) + (4 × ₱50) + (6 × ₱20) =', answer:920}
+    ],
+    closing:'"Sa kabuuan ay nakaipon ako ng siyam na raan at dalawampung piso (₱920)," sabi ni Althea.',
+    discuss:[
+      'Bakit gusto nang buksan ni Althea at Von ang kanilang alkansiya?',
+      'Magkano ang kabuuang naipon ni Althea?'
+    ]
+  },
+  { id:3, type:'math', img:'images/bakasyon-page3.png',
+    caption:'Ibinahagi naman ni Von ang kanyang naipon.',
+    narration:`"Nakapag-ipon po ako ng dalawang tig-iisang daang piso, tatlong tig-lilimampung piso, at limang tig-dadalawampung piso," wika naman ni Von. "Nakakatuwa kayo mga anak dahil sa inyong pagiging masinop," ang sabi ng ama.`,
+    problems:[
+      {label:'(2 × ₱100) + (3 × ₱50) + (5 × ₱20) =', answer:600}
+    ],
+    closing:'"Sige mga anak, isasama ko kayo bukas sa Pamilihang Bayan upang bumili ng pasalubong sa lolo at lola ninyo," ang sabi ng ina.',
+    discuss:[
+      'Magkano ang kabuuang halaga ng naipon ni Von?',
+      'Bakit natuwa ang nanay ni Von at Althea sa kanila?'
+    ]
+  },
+  { id:4, type:'closing', img:'images/bakasyon-page4.png',
+    caption:'Masayang sumayaw ang magkapatid bago sila magbakasyon sa Baguio.',
+    text:'Masayang-masaya ang magkapatid habang hinihintay ang kanilang paglalakbay patungong Baguio.'
+  },
+  { id:5, type:'questions',
+    title:'Mga Tanong',
+    items:[
+      {q:'1. Sino-sino ang magkakapatid sa kwento?', choices:[
+        {text:'Althea at Von', correct:true},
+        {text:'Toto at Nene', correct:false},
+        {text:'Allysa at Leah', correct:false}
+      ]},
+      {q:'2. Saan sila magbabakasyon?', choices:[
+        {text:'Sa Lungsod ng Baguio', correct:true},
+        {text:'Sa Boracay', correct:false},
+        {text:'Sa Tagaytay', correct:false}
+      ]},
+      {q:'3. Bakit sila isinama ng kanilang nanay sa pamilihang bayan?', reflect:true},
+      {q:'4. Kung ikaw si Althea at Von, paano mo maipapakita ang pagmamahal sa iyong lolo at lola?', reflect:true},
+      {q:'5. Mahalaga ba ang mag-impok kahit sa murang edad pa lamang? Bakit?', reflect:true}
+    ]
+  }
+];
+
+/* ============================================================
+   STORY CONTENT — "Ang mga Pananim ni Diding"
+   ============================================================ */
+const STORY_DIDING = [
+  { id:1, type:'text', img:'images/diding-page1.png',
+    caption:'Maagang gising si Aling Diding para alagaan ang kanyang mga tanim.',
+    text:`Si Diding ay isang masipag na ina. Mayroon siyang munting gulayan sa kaniyang bakuran. Sa kaniyang bakuran mapapansin ang iba't ibang uri ng mga tanim tulad ng talong, okra, kalabasa, sitaw, kangkong at marami pang iba. Madaling araw pa lamang ay gising na si Diding upang alagaan at diligan ang kaniyang mga alagang tanim. Masaya niyang kinakausap ang kaniyang mga tanim hanggang sa ito ay lumaki. Lumipas ang mga araw, namunga na ang kanyang mga alagang gulay. Pinitas niya ang mga bunga ng talong, sitaw at kalabasa.`,
+    discuss:[
+      'Sino ang masipag na ina?',
+      'Ano ang mayroon sa kanyang bakuran?',
+      'Ano-ano ang kanyang mga pananim sa kanyang bakuran?',
+      'Paano inaalagaan ni Aling Diding ang kanyang mga pananim?'
+    ]
+  },
+  { id:2, type:'math', img:'images/diding-page2.png',
+    caption:'Tinimbang ni Aling Diding ang kanyang mga inaning gulay.',
+    narration:`Tinimbang niya muna ang bawat gulay bago ibenta. Ang talong ay pitong kilo, ang sitaw ay apat na kilo, at ang kalabasa naman ay walong kilo. Ang bawat kilo ng talong ay apatnapung piso (₱40), ang sitaw naman ay tatlumpung piso (₱30), at ang kalabasa ay limampung piso (₱50).`,
+    problems:[
+      {label:'7 kilo ng talong × ₱40 =', answer:280},
+      {label:'4 kilo ng sitaw × ₱30 =', answer:120},
+      {label:'8 kilo ng kalabasa × ₱50 =', answer:400},
+      {label:'₱280 + ₱120 + ₱400 =', answer:800}
+    ],
+    closing:'Nang araw na iyon, kumita si Aling Diding ng walong daang piso (₱800). Ipinapakita lamang nito na kapag masipag ang isang tao ay hindi magugutom. Maliban sa magandang libangan ang pagtatanim ay pwede pa itong pagkakitaan.',
+    discuss:[
+      'Ilang kilo ang talong, kalabasa, at sitaw?',
+      'Magkano lahat ang kinita ni Aling Diding?'
+    ]
+  },
+  { id:3, type:'closing', img:'images/diding-page3.png',
+    caption:'Masaganang bukirin ni Aling Diding, bunga ng kanyang sipag.',
+    text:'Masaganang bukirin ni Aling Diding, bunga ng kanyang sipag at pagmamahal sa pagtatanim.'
+  },
+  { id:4, type:'questions',
+    title:'Mga Tanong',
+    items:[
+      {q:'1. Sino ang may gulayan sa kanilang bakuran?', choices:[
+        {text:'Si Aling Diding', correct:true},
+        {text:'Si Maria', correct:false},
+        {text:'Si Nene', correct:false}
+      ]},
+      {q:'2. Ano-ano ang mga tanim niyang gulay?', choices:[
+        {text:'Talong, okra, kalabasa, sitaw, at kangkong', correct:true},
+        {text:'Mangga at saging', correct:false},
+        {text:'Bigas at mais', correct:false}
+      ]},
+      {q:'3. Paano niya inaalagaan ang kaniyang mga pananim?', reflect:true},
+      {q:'4. Anong katangian mayroon si Aling Diding?', reflect:true},
+      {q:'5. Ayon sa kwento, ano ang magandang dulot ng pagtatanim?', reflect:true}
+    ]
+  }
+];
+
 const LIBRARY = [
   { key:'pawpagong', title:'Si Paw Pagong at si Rabi Kuneho', author:'Isinulat ni: Genelyn M. Cano', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/pawpagong-thumb.png', pages: STORY_PAWPAGONG, available:true },
+  { key:'maria', title:'Ang Masipag na si Maria', author:'Isinulat ni: Rogelio B. Candido Jr.', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/maria-thumb.png', pages: STORY_MARIA, available:true },
+  { key:'nakahihigit', title:'Sino ang Mas Nakahihigit', author:'Isinulat ni: Elizabeth B. Pasion', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/nakahihigit-thumb.png', pages: STORY_NAKAHIHIGIT, available:true },
+  { key:'bakasyon', title:'Bakasyon Na', author:'Isinulat ni: Analy F. Bete', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/bakasyon-thumb.png', pages: STORY_BAKASYON, available:true },
+  { key:'diding', title:'Ang mga Pananim ni Diding', author:'Isinulat ni: Maribel Relox', illustrator:'Iginuhit ni: Albert Xavier M. Merano', thumb:'images/diding-thumb.png', pages: STORY_DIDING, available:true },
   { key:'basura', title:'Basura', author:'Isinulat ni: Rinelie D. Ediesca', illustrator:'Iginuhit ni: Adrian M. Cebu', thumb:'images/basura-thumb.png', pages: STORY_BASURA, available:true }
   // halimbawa ng paglalagay ng susunod na kwento:
   // { key:'susunod', title:'Pangalan ng Bagong Kwento', author:'Isinulat ni: ___', illustrator:'Iginuhit ni: ___', thumb:'images/susunod-thumb.png', pages: STORY_SUSUNOD, available:true }
