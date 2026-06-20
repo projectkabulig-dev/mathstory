@@ -1636,14 +1636,7 @@ function sendLog(avgReading, compCorrect, compTotal){
     timestamp: new Date().toISOString(),
     school: state.school,
     district: state.district,
-    storyTitle: state.activeStoryKey,
-    readingAccuracy: avgReading,
-    mathCorrect: state.mathCorrect,
-    mathTotal: state.mathTotal,
-    comprehensionCorrect: compCorrect,
-    comprehensionTotal: compTotal,
-    reflectionAnswers: JSON.stringify(state.comprehension._reflectAnswers || {}),
-    discussAnswers: JSON.stringify(state.discussAnswers || [])
+    storyTitle: state.activeStoryKey
   };
   fetch(APPS_SCRIPT_URL, {
     method:'POST', mode:'no-cors',
