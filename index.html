@@ -255,12 +255,12 @@
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,83,79,0.5);}70%{box-shadow:0 0 0 12px rgba(217,83,79,0);}100%{box-shadow:0 0 0 0 rgba(217,83,79,0);}}
   .mic-status{font-size:13px; color:var(--navy-500); font-weight:700;}
   .skip-silent-btn{
-    display:block; border:none; background:none;
-    color:#7a8294; font-size:12.5px; font-weight:700;
-    text-decoration:underline; padding:6px 0 14px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    border:2px solid var(--navy-700); background:#fff; border-radius:999px; padding:9px 20px;
+    color:var(--navy-700); font-weight:800; font-size:14px; cursor:pointer;
   }
-  .skip-silent-btn:hover{color:var(--navy-700);}
-  .skip-silent-btn:disabled{opacity:0.4; cursor:not-allowed; text-decoration:none;}
+  .skip-silent-btn:hover{background:#eef1f7;}
+  .skip-silent-btn:disabled{opacity:0.4; cursor:not-allowed; background:#fff;}
   .reset-link{border:none; background:none; color:var(--navy-500); font-size:13px; font-weight:700; text-decoration:underline; padding:4px;}
 
   .accuracy-pill{display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-weight:800; font-size:13px;}
@@ -743,7 +743,16 @@ const ALIAS_GROUPS = [
   ['allysa','alyssa','alisa','allisa','elisa'],
   ['leah','lea','leya'],
   ['ibeng','ibing','ebeng'],
-  ['piso','pesos','peso']
+  ['piso','pesos','peso'],
+  ['paw','pao','pau'],
+  ['pagong','pagon'],
+  ['kuneho','kuniho','kunejo','naeho','kuneyo'],
+  ['rabi','rabbit','ramen','robi','rabe'],
+  ['ehersisyo','hersisyon','ehersisyon','ehersisyo'],
+  ['nagyaya','naghiya','nagyayya'],
+  ['magkarera','magkarira','magkarrera'],
+  ['nangunot','nagulat'],
+  ['sumulat','sugulat']
 ];
 function inSameAliasGroup(a,b){
   return ALIAS_GROUPS.some(group => group.includes(a) && group.includes(b));
@@ -775,7 +784,7 @@ function alignWords(expWords, saidWords){
   for(let j=0;j<=n;j++) dp[0][j] = j;
   for(let i=1;i<=m;i++){
     for(let j=1;j<=n;j++){
-      const isMatch = wordSimilarity(expWords[i-1], saidWords[j-1]) > 0.72;
+      const isMatch = wordSimilarity(expWords[i-1], saidWords[j-1]) > 0.62;
       const diag = dp[i-1][j-1] + (isMatch ? 0 : 1);
       const up = dp[i-1][j] + 1;
       const left = dp[i][j-1] + 1;
@@ -787,7 +796,7 @@ function alignWords(expWords, saidWords){
   let i = m, j = n;
   while(i>0 || j>0){
     if(i>0 && j>0){
-      const isMatch = wordSimilarity(expWords[i-1], saidWords[j-1]) > 0.72;
+      const isMatch = wordSimilarity(expWords[i-1], saidWords[j-1]) > 0.62;
       const diagCost = dp[i-1][j-1] + (isMatch ? 0 : 1);
       if(dp[i][j] === diagCost){
         expStatus[i-1] = isMatch ? 'correct' : 'substitution';
@@ -808,9 +817,24 @@ function alignWords(expWords, saidWords){
   return {expStatus, insertions};
 }
 
+/**
+ * removeConsecutiveDuplicates — kapag may natigil at na-restart ang
+ * mikropono, posibleng madoble ang ilang salita/parirala. Tatanggalin
+ * dito ang mga sunod-sunodang eksaktong paulit-ulit na salita.
+ */
+function removeConsecutiveDuplicates(words){
+  const result = [];
+  for(let i=0;i<words.length;i++){
+    if(i>0 && words[i]===words[i-1]) continue;
+    result.push(words[i]);
+  }
+  return result;
+}
+
 function compareReading(expectedText, transcript){
   const expWords = normalizeText(expectedText).split(' ').filter(Boolean);
-  const saidWords = normalizeText(transcript).split(' ').filter(Boolean);
+  let saidWords = normalizeText(transcript).split(' ').filter(Boolean);
+  saidWords = removeConsecutiveDuplicates(saidWords);
   const {expStatus, insertions} = alignWords(expWords, saidWords);
   const results = expWords.map((w, idx)=>({word:w, status:expStatus[idx]}));
   const correctCount = expStatus.filter(s=>s==='correct').length;
@@ -884,8 +908,11 @@ function setupMic(targetText, onFinalized){
       `<span class="${classMap[r.status]}">${r.word}</span>`
     ).join(' ');
 
+    const MAX_EXTRA_SHOWN = 6;
+    const shownExtras = insertions.slice(0, MAX_EXTRA_SHOWN);
+    const remainingExtras = insertions.length - shownExtras.length;
     const extraHTML = insertions.length
-      ? `<div class="extra-words">Mga dagdag na sinabi (wala sa teksto): ${insertions.map(w=>`<span class="chip">${w}</span>`).join('')}</div>`
+      ? `<div class="extra-words">Mga dagdag na sinabi (wala sa teksto): ${shownExtras.map(w=>`<span class="chip">${w}</span>`).join('')}${remainingExtras>0 ? `<span class="chip">+${remainingExtras} pa</span>` : ''}</div>`
       : '';
 
     readoutArea.innerHTML = `
@@ -977,9 +1004,9 @@ function renderClosingPage(page){
           <p class="story-text" id="storyText">${page.text}</p>
           <div class="mic-row">
             <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
+            <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa</button>
             <span class="mic-status" id="micStatus"></span>
           </div>
-          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
           <div id="readoutArea"></div>
           <div class="continue-row"><button class="btn-continue" id="btnNext" disabled>Magpatuloy →</button></div>
         </div>
@@ -1052,9 +1079,9 @@ function renderTextPage(page){
           <p class="story-text" id="storyText">${page.text}</p>
           <div class="mic-row">
             <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
+            <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa</button>
             <span class="mic-status" id="micStatus"></span>
           </div>
-          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
           <div id="readoutArea"></div>
           ${discussBoxHTML(page.discuss)}
           <div class="continue-row"><button class="btn-continue" id="btnNext" disabled>Magpatuloy →</button></div>
@@ -1084,9 +1111,9 @@ function renderMathPage(page){
           <p class="story-text" id="storyText">${page.narration}</p>
           <div class="mic-row">
             <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
+            <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa</button>
             <span class="mic-status" id="micStatus"></span>
           </div>
-          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
           <div id="readoutArea"></div>
           <div id="problemsArea" style="margin-top:18px;"></div>
           <div class="closing-line" id="closingLine" style="display:none;">${page.closing}</div>
