@@ -291,7 +291,7 @@
     margin-bottom:10px; font-size:18px; font-weight:800; color:var(--navy-900); flex-wrap:wrap;
   }
   .math-problem input{
-    width:64px; padding:8px; text-align:center; font-size:18px; font-weight:800;
+    width:90px; padding:8px 6px; text-align:center; font-size:18px; font-weight:800;
     border-radius:8px; border:2px solid #dfe3ea; font-family:var(--font-main);
   }
   .math-problem input.correct{border-color:var(--success); background:var(--success-bg); color:var(--success);}
@@ -302,8 +302,21 @@
     margin-top:16px; padding:14px 16px; background:#EAF2FF; border-radius:12px;
     border-left:4px solid #2A4A8F;
   }
-  .discuss-box .discuss-title{font-weight:800; color:#2A4A8F; font-size:13.5px; margin-bottom:6px;}
-  .discuss-box ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--navy-700); line-height:1.6;}
+  .discuss-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .discuss-title{font-weight:800; color:#2A4A8F; font-size:13.5px;}
+  .discuss-skip-btn{
+    border:none; background:none; color:#5d6b85; font-size:12px; font-weight:700;
+    text-decoration:underline; cursor:pointer;
+  }
+  .discuss-skip-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .discuss-q-item{margin-bottom:14px;}
+  .discuss-q-item:last-child{margin-bottom:0;}
+  .discuss-q-text{font-size:13.5px; font-weight:700; color:var(--navy-700); margin:0 0 6px;}
+  .discuss-reflect{
+    width:100%; min-height:60px; border-radius:8px; border:2px solid #cdd9ee;
+    padding:8px 10px; font-family:var(--font-main); font-size:13.5px; resize:vertical;
+  }
+  .discuss-skipped-note{font-size:13px; color:#5d6b85; font-style:italic; margin:0;}
 
   .q-block{margin-bottom:22px;}
   .q-block p.q-text{font-weight:800; font-size:15.5px; color:var(--navy-900); margin-bottom:10px;}
@@ -325,6 +338,21 @@
   .score-tile .label{font-size:12px; color:#6b7585; font-weight:700; margin-top:2px;}
   .result-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px;}
   .sending-note{font-size:12px; color:#8a93a6; margin-top:14px;}
+  .breakdown-section{margin-top:18px;}
+  .breakdown-section h4{font-size:13px; color:#6b7585; text-transform:uppercase; letter-spacing:.04em; margin:18px 0 8px;}
+  .breakdown-item{
+    display:flex; align-items:flex-start; gap:10px;
+    padding:10px 12px; border-radius:10px; margin-bottom:6px; font-size:13.5px;
+  }
+  .breakdown-item.is-correct{background:var(--success-bg);}
+  .breakdown-item.is-wrong{background:var(--error-bg);}
+  .breakdown-item .mark{font-weight:800; font-size:15px;}
+  .breakdown-item .mark.ok{color:var(--success);}
+  .breakdown-item .mark.bad{color:var(--error);}
+  .breakdown-item .detail{flex:1;}
+  .breakdown-item .detail .q{font-weight:700; color:var(--navy-900);}
+  .breakdown-item .detail .a{color:#5d6b85; font-size:12.5px; margin-top:2px;}
+  .breakdown-item .detail .a b{color:var(--navy-700);}
 </style>
 </head>
 <body>
@@ -443,6 +471,7 @@
         <div class="score-tile"><div class="num" id="scoreComp">0/2</div><div class="label">Pag-unawa</div></div>
         <div class="score-tile"><div class="num" id="scoreDistrict">—</div><div class="label">Distrito</div></div>
       </div>
+      <div id="breakdownSlot" style="text-align:left;"></div>
       <div class="result-actions">
         <button class="btn-secondary" id="btnRestart">🔄 Ulitin ang Kwento</button>
         <button class="btn-secondary" id="btnBackToLibrary">📚 Ibang Kwento</button>
@@ -458,7 +487,7 @@
 /* ============================================================
    CONFIG — palitan mo ito ng URL ng deployed Apps Script
    ============================================================ */
-const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycbcMqDkJe4zauIhaKs8hs7L_gRpBDBzAC91YK3C4KubnnjndzRzDkv7qXqvERwUaJ/exec";
 
 /* ============================================================
    STORY CONTENT — "Basura"
@@ -581,7 +610,9 @@ let state = {
   activeStoryKey:'', pages:[], pageIndex:0,
   readingScores:[],
   mathTotal:0, mathCorrect:0,
-  comprehension:{_choiceResults:[], _reflectAnswers:{}}
+  comprehension:{_choiceResults:[], _reflectAnswers:{}, _choiceDetails:[]},
+  mathDetails:[],
+  discussAnswers:[]
 };
 
 /* ============================================================
@@ -594,8 +625,8 @@ function showScreen(id){
 
 function resetProgress(){
   state.activeStoryKey=''; state.pages=[]; state.pageIndex=0;
-  state.readingScores=[]; state.mathTotal=0; state.mathCorrect=0;
-  state.comprehension={_choiceResults:[], _reflectAnswers:{}};
+  state.readingScores=[]; state.mathTotal=0; state.mathCorrect=0; state.mathDetails=[]; state.discussAnswers=[];
+  state.comprehension={_choiceResults:[], _reflectAnswers:{}, _choiceDetails:[]};
 }
 
 function goHome(confirmFirst){
@@ -943,22 +974,74 @@ function renderClosingPage(page){
     <div class="book-card">
       <div class="book-columns">
         <div class="col-left">
-          <p class="story-text">${page.text}</p>
-          <div class="continue-row"><button class="btn-continue" id="btnNext">Magpatuloy →</button></div>
+          <p class="story-text" id="storyText">${page.text}</p>
+          <div class="mic-row">
+            <button class="mic-btn" id="micBtn">🎤 Magsimula sa Pagbasa</button>
+            <span class="mic-status" id="micStatus"></span>
+          </div>
+          <button class="skip-silent-btn" id="skipMicBtn">⏭ Tahimik na Pagbasa (lumaktaw sa mikropono)</button>
+          <div id="readoutArea"></div>
+          <div class="continue-row"><button class="btn-continue" id="btnNext" disabled>Magpatuloy →</button></div>
         </div>
         ${imageColumnHTML(page.img, page.caption)}
       </div>
     </div>`;
+  setupMic(page.text, (done)=>{ document.getElementById('btnNext').disabled = !done; });
+  document.getElementById('skipMicBtn').addEventListener('click', ()=>{
+    document.getElementById('micBtn').disabled = true;
+    document.getElementById('skipMicBtn').disabled = true;
+    document.getElementById('micStatus').textContent = '✓ Tahimik na binasa.';
+    document.getElementById('btnNext').disabled = false;
+  });
   document.getElementById('btnNext').addEventListener('click', nextPage);
 }
 
 function discussBoxHTML(discuss){
   if(!discuss || !discuss.length) return '';
+  const items = discuss.map((q, idx)=>`
+    <div class="discuss-q-item">
+      <p class="discuss-q-text">${q}</p>
+      <textarea class="discuss-reflect" id="discuss-${idx}" placeholder="Isulat ang sagot dito..."></textarea>
+      <button class="dictate-btn" data-target="discuss-${idx}">🎤 Magsalita</button>
+    </div>`).join('');
   return `
     <div class="discuss-box">
-      <div class="discuss-title">🤔 Pag-isipan (talakayin sa klase, hindi iskor)</div>
-      <ul>${discuss.map(q=>`<li>${q}</li>`).join('')}</ul>
+      <div class="discuss-title-row">
+        <div class="discuss-title">🤔 Pag-isipan</div>
+        <button class="discuss-skip-btn" id="discussSkipBtn">⏭ Lumaktaw</button>
+      </div>
+      <div id="discussItemsWrap">${items}</div>
     </div>`;
+}
+
+function wireDiscussBox(discuss){
+  if(!discuss || !discuss.length) return { skipped:false };
+  const state_ = { skipped:false };
+  document.querySelectorAll('#discussItemsWrap .dictate-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>dictateInto(btn));
+  });
+  const skipBtn = document.getElementById('discussSkipBtn');
+  if(skipBtn){
+    skipBtn.addEventListener('click', ()=>{
+      state_.skipped = true;
+      document.getElementById('discussItemsWrap').innerHTML = '<p class="discuss-skipped-note">Nilaktawan ang talakayang ito.</p>';
+      skipBtn.disabled = true;
+    });
+  }
+  return state_;
+}
+
+function captureDiscussAnswers(discuss, discussState){
+  if(!discuss || !discuss.length) return;
+  if(discussState && discussState.skipped){
+    discuss.forEach(q=>state.discussAnswers.push({question:q, answer:'', skipped:true}));
+    return;
+  }
+  discuss.forEach((q, idx)=>{
+    const ta = document.getElementById(`discuss-${idx}`);
+    const val = ta ? ta.value.trim() : '';
+    if(val) state.discussAnswers.push({question:q, answer:val, skipped:false});
+  });
 }
 
 function renderTextPage(page){
@@ -986,7 +1069,11 @@ function renderTextPage(page){
     document.getElementById('micStatus').textContent = '✓ Tahimik na binasa.';
     document.getElementById('btnNext').disabled = false;
   });
-  document.getElementById('btnNext').addEventListener('click', nextPage);
+  const discussState = wireDiscussBox(page.discuss);
+  document.getElementById('btnNext').addEventListener('click', ()=>{
+    captureDiscussAnswers(page.discuss, discussState);
+    nextPage();
+  });
 }
 
 function renderMathPage(page){
@@ -1012,10 +1099,12 @@ function renderMathPage(page){
 
   let readingDone = false;
   let mathDone = false;
+  let discussState = { skipped:false };
   function maybeEnableNext(){
     if(readingDone && mathDone){
       document.getElementById('closingLine').style.display = 'block';
       document.getElementById('discussSlot').innerHTML = discussBoxHTML(page.discuss);
+      discussState = wireDiscussBox(page.discuss);
       document.getElementById('btnNext').disabled = false;
     }
   }
@@ -1040,19 +1129,29 @@ function renderMathPage(page){
       const input = document.getElementById(`ans-${idx}`);
       if(input.dataset.scored === 'true') return;
       const val = parseInt(input.value, 10);
+      const isCorrect = (val === prob.answer);
       state.mathTotal++;
-      if(val === prob.answer){
+      if(isCorrect){
         input.classList.add('correct'); input.classList.remove('wrong'); state.mathCorrect++;
       } else {
         input.classList.add('wrong'); input.classList.remove('correct');
       }
+      state.mathDetails.push({
+        label: prob.label,
+        studentAnswer: isNaN(val) ? '(walang sagot)' : val,
+        correctAnswer: prob.answer,
+        isCorrect: isCorrect
+      });
       input.dataset.scored = 'true';
       solvedCount++;
       if(solvedCount === page.problems.length){ mathDone = true; maybeEnableNext(); }
     });
   });
 
-  document.getElementById('btnNext').addEventListener('click', nextPage);
+  document.getElementById('btnNext').addEventListener('click', ()=>{
+    captureDiscussAnswers(page.discuss, discussState);
+    nextPage();
+  });
 }
 
 function renderQuestionsPage(){
@@ -1079,10 +1178,11 @@ function renderQuestionsPage(){
 
   state.comprehension._choiceResults = [];
   state.comprehension._reflectAnswers = {};
+  state.comprehension._choiceDetails = [];
 
   items.forEach((item, idx)=>{
     if(item.choices){
-      renderChoices(`qopts-${idx}`, idx, item.choices);
+      renderChoices(`qopts-${idx}`, idx, item.choices, item.q);
     }
   });
 
@@ -1099,7 +1199,7 @@ function renderQuestionsPage(){
   });
 }
 
-function renderChoices(containerId, qIdx, choices){
+function renderChoices(containerId, qIdx, choices, questionText){
   const container = document.getElementById(containerId);
   choices.forEach(choice=>{
     const btn = document.createElement('button');
@@ -1108,6 +1208,13 @@ function renderChoices(containerId, qIdx, choices){
     btn.addEventListener('click', ()=>{
       if(state.comprehension._choiceResults[qIdx] !== undefined) return;
       state.comprehension._choiceResults[qIdx] = choice.correct;
+      const correctChoice = choices.find(c=>c.correct);
+      state.comprehension._choiceDetails.push({
+        question: questionText,
+        selected: choice.text,
+        correct: correctChoice ? correctChoice.text : '',
+        isCorrect: choice.correct
+      });
       container.querySelectorAll('.choice-btn').forEach(b=>b.disabled = true);
       btn.classList.add('selected', choice.correct ? 'correct' : 'wrong');
     });
@@ -1155,6 +1262,67 @@ function dictateInto(btn){
 /* ============================================================
    RESULTS
    ============================================================ */
+function buildBreakdownHTML(){
+  let html = '';
+
+  if(state.mathDetails.length){
+    html += `<div class="breakdown-section"><h4>Mga Sagot sa Matematika</h4>`;
+    state.mathDetails.forEach(d=>{
+      html += `
+        <div class="breakdown-item ${d.isCorrect ? 'is-correct' : 'is-wrong'}">
+          <span class="mark ${d.isCorrect ? 'ok' : 'bad'}">${d.isCorrect ? '✓' : '✗'}</span>
+          <div class="detail">
+            <div class="q">${d.label} ${d.studentAnswer}</div>
+            ${d.isCorrect ? '' : `<div class="a">Tamang sagot: <b>${d.correctAnswer}</b></div>`}
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+
+  const choiceDetails = state.comprehension._choiceDetails || [];
+  if(choiceDetails.length){
+    html += `<div class="breakdown-section"><h4>Mga Sagot sa Pag-unawa</h4>`;
+    choiceDetails.forEach(d=>{
+      html += `
+        <div class="breakdown-item ${d.isCorrect ? 'is-correct' : 'is-wrong'}">
+          <span class="mark ${d.isCorrect ? 'ok' : 'bad'}">${d.isCorrect ? '✓' : '✗'}</span>
+          <div class="detail">
+            <div class="q">${d.question}</div>
+            <div class="a">Sagot ng bata: <b>${d.selected}</b>${d.isCorrect ? '' : ` — Tamang sagot: <b>${d.correct}</b>`}</div>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+
+  const reflectAnswers = state.comprehension._reflectAnswers || {};
+  const reflectEntries = Object.values(reflectAnswers).filter(v=>v && v.trim());
+  if(reflectEntries.length){
+    html += `<div class="breakdown-section"><h4>Mga Sagot sa Pagninilay (basahin ng guro)</h4>`;
+    reflectEntries.forEach(text=>{
+      html += `<div class="breakdown-item" style="background:#f3f1e9;"><div class="detail"><div class="a">${text}</div></div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if(state.discussAnswers && state.discussAnswers.length){
+    html += `<div class="breakdown-section"><h4>Mga Sagot sa Pag-isipan</h4>`;
+    state.discussAnswers.forEach(d=>{
+      html += `
+        <div class="breakdown-item" style="background:#f3f1e9;">
+          <div class="detail">
+            <div class="q">${d.question}</div>
+            <div class="a">${d.skipped ? '<i>(Nilaktawan)</i>' : d.answer}</div>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+
+  return html;
+}
+
 function showResults(){
   const avgReading = state.readingScores.length
     ? Math.round(state.readingScores.reduce((a,b)=>a+b,0)/state.readingScores.length)
@@ -1167,6 +1335,8 @@ function showResults(){
   document.getElementById('scoreMath').textContent = state.mathCorrect+'/'+state.mathTotal;
   document.getElementById('scoreComp').textContent = compCorrect+'/'+compTotal;
   document.getElementById('scoreDistrict').textContent = state.district;
+
+  document.getElementById('breakdownSlot').innerHTML = buildBreakdownHTML();
 
   const combined = (avgReading/100*0.4) + (state.mathTotal? state.mathCorrect/state.mathTotal*0.4 : 0) + (compTotal? compCorrect/compTotal*0.2 : 0.2);
   const starCount = combined>=0.85 ? 3 : combined>=0.6 ? 2 : 1;
@@ -1204,7 +1374,8 @@ function sendLog(avgReading, compCorrect, compTotal){
     mathTotal: state.mathTotal,
     comprehensionCorrect: compCorrect,
     comprehensionTotal: compTotal,
-    reflectionAnswers: JSON.stringify(state.comprehension._reflectAnswers || {})
+    reflectionAnswers: JSON.stringify(state.comprehension._reflectAnswers || {}),
+    discussAnswers: JSON.stringify(state.discussAnswers || [])
   };
   fetch(APPS_SCRIPT_URL, {
     method:'POST', mode:'no-cors',
