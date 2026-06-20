@@ -477,7 +477,6 @@
         <button class="btn-secondary" id="btnBackToLibrary">📚 Ibang Kwento</button>
         <button class="btn-secondary" id="btnHome3">🏠 Unang Pahina</button>
       </div>
-      <p class="sending-note" id="sendingNote">Ipinapadala ang resulta...</p>
     </div>
   </section>
 
@@ -954,6 +953,7 @@ function startStory(story){
   state.pageIndex = 0;
   showScreen('screen-reader');
   renderPage();
+  sendLog();
 }
 
 /* ============================================================
@@ -1611,7 +1611,6 @@ function showResults(){
   document.getElementById('starsDisplay').textContent = '⭐'.repeat(starCount) + '☆'.repeat(3-starCount);
 
   showScreen('screen-results');
-  sendLog(avgReading, compCorrect, compTotal);
 }
 
 document.getElementById('btnRestart').addEventListener('click', ()=>{
@@ -1626,10 +1625,13 @@ document.getElementById('btnRestart').addEventListener('click', ()=>{
 /* ============================================================
    LOGGING TO GOOGLE APPS SCRIPT
    ============================================================ */
-function sendLog(avgReading, compCorrect, compTotal){
-  const note = document.getElementById('sendingNote');
+/* ============================================================
+   LOGGING TO GOOGLE APPS SCRIPT — pinapaandar sa sandaling
+   pumili ng kwento ang bata (hindi na hinihintay matapos)
+   ============================================================ */
+function sendLog(){
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
-    note.textContent = 'Hindi pa nakaset ang Apps Script URL — hindi naipadala ang resulta.';
+    console.warn('Hindi pa nakaset ang Apps Script URL — hindi naipadala ang log.');
     return;
   }
   const payload = {
@@ -1642,8 +1644,7 @@ function sendLog(avgReading, compCorrect, compTotal){
     method:'POST', mode:'no-cors',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(payload)
-  }).then(()=>{ note.textContent = 'Naipadala na ang resulta. Salamat sa pagbasa!'; })
-    .catch(()=>{ note.textContent = 'Hindi naipadala ang resulta (walang internet?). Hindi mawawala ang ginawa mo.'; });
+  }).catch(()=>{ console.warn('Hindi naipadala ang log (walang internet?).'); });
 }
 </script>
 </body>
